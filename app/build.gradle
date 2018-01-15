@@ -1,11 +1,14 @@
 apply plugin: 'com.android.application'
 
 apply plugin: 'kotlin-android'
-
+apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 26
+    dataBinding {
+        enabled true
+    }
     defaultConfig {
         applicationId "com.wajahatkarim3.firestore_usersonline"
         minSdkVersion 19
@@ -25,10 +28,26 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    implementation 'com.android.support:appcompat-v7:26.1.0'
+    kapt 'com.android.databinding:compiler:3.0.0'
+
+    // Support
+    implementation "com.android.support:appcompat-v7:$support_version"
+    implementation "com.android.support:design:$support_version"
+    implementation "com.android.support:cardview-v7:$support_version"
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    implementation 'com.google.firebase:firebase-database:11.0.4'
-    implementation 'com.google.firebase:firebase-firestore:11.0.4'
+
+    // Firebase
+    implementation "com.google.firebase:firebase-database:$firebase_version"
+    implementation "com.google.firebase:firebase-firestore:$firebase_version"
+    implementation "com.google.android.gms:play-services-auth:$firebase_version"
+
+    // Other Dependencies
+    implementation 'com.iamhabib:easy-preference:1.0.1'
+    implementation 'com.github.gurleensethi:LiteUtilities:v1.3.0'
+    compile 'org.ocpsoft.prettytime:prettytime:4.0.1.Final'
+    compile 'morxander.zaman:Zaman:1.0.0'
+    compile 'com.github.thunder413:DateTimeUtils:1.0'
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'

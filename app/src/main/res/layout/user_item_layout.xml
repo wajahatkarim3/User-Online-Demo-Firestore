@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <RelativeLayout android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="10dp"
+        android:gravity="center_vertical">
+
+        <ImageView android:id="@+id/imgUser"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="#a7a7a7"/>
+
+        <TextView android:id="@+id/txtUserName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/imgUser"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:text="Test User"
+            android:textColor="@color/cardview_dark_background"
+            android:textStyle="bold"
+            android:textSize="20sp"/>
+
+        <TextView android:id="@+id/txtOnlineStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/imgUser"
+            android:layout_below="@+id/txtUserName"
+            android:layout_marginLeft="10dp"
+            android:text="Active 10 minutes ago"/>
+
+    </RelativeLayout>
+</layout>
