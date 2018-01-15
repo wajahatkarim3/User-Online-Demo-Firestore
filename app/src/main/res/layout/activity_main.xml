@@ -22,7 +22,6 @@
                 android:layout_height="wrap_content"
                 android:inputType="none"
                 android:focusable="false"
-                android:text="Wajahat"
                 android:hint="Current User"/>
 
         </android.support.design.widget.TextInputLayout>

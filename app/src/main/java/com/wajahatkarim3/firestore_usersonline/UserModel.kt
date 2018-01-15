@@ -7,6 +7,6 @@ data class UserModel constructor(
         var userId: String? = null,
         var name: String? = null,
         var status: String? = null,
-        var last_active: Int = 0,
+        var last_active: Long = 0,
         var online: Boolean = true
 )

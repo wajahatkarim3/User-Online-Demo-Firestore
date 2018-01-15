@@ -58,6 +58,7 @@ class MyAutoCompleteTextview : android.support.v7.widget.AppCompatAutoCompleteTe
     fun setItems(list: Array<String>) {
         adapter = ArrayAdapter(mContext!!, android.R.layout.simple_list_item_1, list)
         setAdapter(adapter)
+        adapter.notifyDataSetChanged()
     }
 
     fun onItemClick( listner: (pos:Int, label:String) -> Unit )

@@ -1,11 +1,13 @@
 package com.wajahatkarim3.firestore_usersonline
 
 import android.databinding.DataBindingUtil
+import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import com.github.thunder413.datetimeutils.DateTimeUtils
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.*
+import com.google.firebase.firestore.EventListener
 import com.thetechnocafe.gurleensethi.liteutils.RecyclerAdapterUtil
 import com.wajahatkarim3.firestore_usersonline.databinding.ActivityMainBinding
 import com.wajahatkarim3.firestore_usersonline.databinding.UserItemLayoutBinding
@@ -20,6 +22,7 @@ class MainActivity : AppCompatActivity() {
 
     var usersList: ArrayList<UserModel> = ArrayList<UserModel>()
     var recyclerAdapter: RecyclerAdapterUtil<UserModel>? = null
+    var selected = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,9 +32,21 @@ class MainActivity : AppCompatActivity() {
         loadUsers()
     }
 
+    override fun onStop() {
+        super.onStop()
+        if (selected != -1)
+            makeUserOffline(usersList.get(selected))
+    }
+
     fun setupViews()
     {
         // Current User Selector
+        bi.txtCurrentUser.onItemClick { pos, label ->
+            if (selected != -1)
+                makeUserOffline(usersList.get(selected))
+            selected = pos
+            makeUserOnline(usersList.get(selected))
+        }
 
         // RecyclerView
         recyclerAdapter = RecyclerAdapterUtil(this, usersList, R.layout.user_item_layout)
@@ -41,8 +56,14 @@ class MainActivity : AppCompatActivity() {
             bbb.txtUserName.setText(item.name)
             when(item.online)
             {
-                true -> bbb.txtOnlineStatus.setText("Online")
-                false -> bbb.txtOnlineStatus.setText(DateTimeUtils.getTimeAgo(this@MainActivity, Date(item.last_active.toLong() * 1000L)))
+                true -> {
+                    bbb.txtOnlineStatus.setText("Online")
+                    bbb.txtOnlineStatus.setTextColor(Color.parseColor("#1BAB16"))
+                }
+                false -> {
+                    bbb.txtOnlineStatus.setText(DateTimeUtils.getTimeAgo(this@MainActivity, Date(item.last_active)))
+                    bbb.txtOnlineStatus.setTextColor(Color.parseColor("#9E9E9E"))
+                }
             }
         }
         bi.recyclerUsers.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
@@ -51,20 +72,48 @@ class MainActivity : AppCompatActivity() {
 
     fun loadUsers()
     {
-        var query = FirebaseFirestore.getInstance().collection("users")
-        query.get().addOnSuccessListener { docs ->
+        var query:Query = FirebaseFirestore.getInstance().collection("users")
+
+        query.addSnapshotListener { snapshots, ex ->
             usersList.clear()
-            usersList.addAll(docs.toObjects(UserModel::class.java))
+            for (doc in snapshots?.documents ?: emptyList()) {
+                usersList.add(doc.toObject(UserModel::class.java))
+            }
             recyclerAdapter?.notifyDataSetChanged()
 
-            var names = Array<String>(usersList.size){ "" }
+            var names = arrayOfNulls<String>(usersList.size)
             var i = 0
-            for (user in usersList)
-            {
-                names[i++] = (user.name ?: "")
+            for (user in usersList) {
+                names[i] = user.name ?: ""
+                i++
             }
-            bi.txtCurrentUser.setItems(names)
-            bi.txtCurrentUser.setText(names[0])
+            bi.txtCurrentUser.setItems(names.requireNoNulls())
         }
+    }
+
+    fun makeUserOnline(user: UserModel)
+    {
+        var query = FirebaseFirestore.getInstance().collection("users").document(user.userId ?: "")
+        user.apply {
+            online = true
+            last_active = 0
+        }
+        query.set(user)
+        /*
+                .addOnCompleteListener { task ->
+            if (task.isSuccessful)
+                loadUsers()
+        }
+        */
+    }
+
+    fun makeUserOffline(user: UserModel)
+    {
+        var query = FirebaseFirestore.getInstance().collection("users").document(user.userId ?: "")
+        user.apply {
+            online = false
+            last_active = System.currentTimeMillis()
+        }
+        query.set(user)
     }
 }
