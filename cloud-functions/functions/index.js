@@ -14,7 +14,7 @@ exports.onUserStatusChanged = functions.database
 			.then(statusSnapshot => snapShot.val())
 			.then(status => {
 				if (status === 'offline'){
-					// Set the firestore's doc's on;ine value to false
+					// Set the firestore's doc's online value to false
 					usersRef
 						.doc(event.params.userId)
 						.set({

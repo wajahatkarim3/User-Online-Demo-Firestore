@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import com.github.thunder413.datetimeutils.DateTimeUtils
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.*
 import com.google.firebase.firestore.EventListener
 import com.thetechnocafe.gurleensethi.liteutils.RecyclerAdapterUtil
@@ -93,6 +94,7 @@ class MainActivity : AppCompatActivity() {
 
     fun makeUserOnline(user: UserModel)
     {
+        // Firestore
         var query = FirebaseFirestore.getInstance().collection("users").document(user.userId ?: "")
         user.apply {
             online = true
@@ -105,15 +107,23 @@ class MainActivity : AppCompatActivity() {
                 loadUsers()
         }
         */
+
+        // Firebase Status
+        var fbquery = FirebaseDatabase.getInstance().getReference("status/" + user.userId).setValue("online")
+
     }
 
     fun makeUserOffline(user: UserModel)
     {
+        // Firestore
         var query = FirebaseFirestore.getInstance().collection("users").document(user.userId ?: "")
         user.apply {
             online = false
             last_active = System.currentTimeMillis()
         }
         query.set(user)
+
+        // Firebase
+        var fbquery = FirebaseDatabase.getInstance().getReference("status/" + user.userId).setValue("offline")
     }
 }
