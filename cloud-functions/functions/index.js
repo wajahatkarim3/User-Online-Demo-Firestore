@@ -3,7 +3,7 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp(functions.config().firebase);
 
-const firestore = functions.firestore;
+const firestore = admin.firestore;
 
 exports.onUserStatusChanged = functions.database
 	.ref('/status/{userId}')
