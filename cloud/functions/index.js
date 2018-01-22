@@ -7,7 +7,13 @@ const firestore = functions.firestore;
 exports.onUserStatusChange = functions.database
 	.ref('/status/{userId}')
 	.onUpdate(event => {
-		const usersRef = firestore.collection('/users');
+		
+		var db = admin.firestore();
+		
+		
+		//const usersRef = firestore.document('/users/' + event.params.userId);
+		const usersRef = db.collection("users");
+		var snapShot = event.data;
 		
 		return event.data.ref.once('value')
 			.then(statusSnap => snapShot.val())
@@ -16,7 +22,8 @@ exports.onUserStatusChange = functions.database
 					usersRef
 						.doc(event.params.userId)
 						.set({
-							online: false
+							online: false,
+							last_active: Date.now()
 						}, {merge: true});
 				}
 			})

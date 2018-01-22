@@ -111,14 +111,21 @@ class MainActivity : AppCompatActivity() {
         // Firebase Status
         var fbquery = FirebaseDatabase.getInstance().getReference("status/" + user.userId).setValue("online")
 
+
+        // Adding on disconnect hook
+        FirebaseDatabase.getInstance().getReference("/status/" + user.userId)
+                .onDisconnect()     // Set up the disconnect hook
+                .setValue("offline");
+
     }
 
     fun makeUserOffline(user: UserModel)
     {
+
         // Firestore
         var query = FirebaseFirestore.getInstance().collection("users").document(user.userId ?: "")
         user.apply {
-            online = false
+        //    online = false
             last_active = System.currentTimeMillis()
         }
         query.set(user)
